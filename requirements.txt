@@ -5,6 +5,6 @@ flask-cors
 pip
 numpy
 
-math
+
 opencv-python
 opencv-python-headless
