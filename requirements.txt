@@ -2,7 +2,7 @@ Flask
 gunicorn
 flask-cors
 traceback
-pip
+pip install --upgrade pip
 numpy
 cv2
 math
