@@ -4,7 +4,7 @@ flask-cors
 
 pip
 numpy
-cv2
+
 math
 opencv-python
 opencv-python-headless
