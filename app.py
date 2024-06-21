@@ -3,38 +3,47 @@ import cv2
 import os
 from YOLO import computeCobb  # Assuming computeCobb is defined in YOLO.py
 
-app = Flask(__name__)
+app = Flask(__name___)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Limit upload size to 16 MB
+
 
 @app.route('/compute-cobb', methods=['POST'])
 def compute_cobb_api():
     try:
-        file = request.files['image']
-        if file:
-            # Save the uploaded image temporarily
-            image_path = 'temp_image.jpg'
-            file.save(image_path)
+        file = request.files.get('image')
+        if not file:
+            return jsonify({'error': 'No image uploaded'}), 400
 
-            # Read the uploaded image using OpenCV
-            image = cv2.imread(image_path)
-            cobb_up, cobb_low, img_cobb, result = computeCobb(image)
+        # Save the uploaded image temporarily
+        image_path = 'temp_image.jpg'
+        file.save(image_path)
 
-            # Remove the temporary image file
+        # Read the uploaded image using OpenCV
+        image = cv2.imread(image_path)
+
+        # Ensure the image is read correctly
+        if image is None:
             os.remove(image_path)
+            return jsonify({'error': 'Invalid image file'}), 400
 
-            if (cobb_up or cobb_low) is None:
-                return jsonify({'error': 'No vertebrae detected or wrong image'})
+        # Perform Cobb angle computation
+        cobb_up, cobb_low, img_cobb, result = computeCobb(image)
 
-            if abs(cobb_up) > abs(cobb_low):
-                cobb_angle = abs(cobb_up)
-            else:
-                cobb_angle = abs(cobb_low)
+        # Remove the temporary image file
+        os.remove(image_path)
 
-            # Return the results as JSON
-            return jsonify({'cobb_angle': cobb_angle, 'classification': result})
-        else:
-            return jsonify({'error': 'No image uploaded'})
+        # Check the results of the computation
+        if (cobb_up or cobb_low) is None:
+            return jsonify({'error': 'No vertebrae detected or wrong image'}), 400
+
+        cobb_angle = max(abs(cobb_up), abs(cobb_low))
+
+        # Return the results as JSON
+        return jsonify({'cobb_angle': cobb_angle, 'classification': result})
+
     except Exception as e:
-        return jsonify({'error': str(e)})
+        return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
