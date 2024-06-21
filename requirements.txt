@@ -1,0 +1,9 @@
+Flask
+gunicorn
+flask-cors
+traceback
+numpy as np
+cv2
+math
+opencv-python
+opencv-python-headless
