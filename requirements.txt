@@ -2,7 +2,8 @@ Flask
 gunicorn
 flask-cors
 traceback
-numpy as np
+--upgrade pip
+numpy
 cv2
 math
 opencv-python
