@@ -33,7 +33,7 @@ def compute_cobb_api():
         os.remove(image_path)
 
         # Check the results of the computation
-        if (cobb_up or cobb_low) is None:
+        if cobb_up is None or cobb_low is None:
             return jsonify({'error': 'No vertebrae detected or wrong image'}), 400
 
         cobb_angle = max(abs(cobb_up), abs(cobb_low))
@@ -46,4 +46,5 @@ def compute_cobb_api():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 4000))
+    app.run(host='0.0.0.0', port=port, debug=True)
