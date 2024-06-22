@@ -4,7 +4,7 @@ import os
 from YOLO import computeCobb  # Assuming computeCobb is defined in YOLO.py
 
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Limit upload size to 16 MB
+
 
 
 @app.route('/compute-cobb', methods=['POST'])
